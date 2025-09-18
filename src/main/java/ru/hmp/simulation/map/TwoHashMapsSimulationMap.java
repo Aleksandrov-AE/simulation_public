@@ -169,8 +169,8 @@ public class TwoHashMapsSimulationMap implements SimulationMap {
                     int distance = Math.max(Math.abs(position.getX() - getEntityPosition(entity).getX()),
                             Math.abs(position.getY() - getEntityPosition(entity).getY()));
 
-                    if (queue.size() > number) {
-                        if (distance < queue.peek().distance) {
+                    if (queue.size() >= number) {
+                        if (!queue.isEmpty() && distance < queue.peek().distance) {
                             queue.poll();
                             queue.add(new PositionDistancePair(entity, distance));
                         }
@@ -178,6 +178,11 @@ public class TwoHashMapsSimulationMap implements SimulationMap {
                         queue.add(new PositionDistancePair(entity, distance));
                     }
                 });
+
+        while (queue.size() > number) {
+            queue.poll();
+        }
+
         return queue.stream().
                 map(positionDistancePair -> positionDistancePair.entity).
                 collect(Collectors.toList());
